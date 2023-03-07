@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React from "react";
-import MovieService from "../../service/movie.api";
+import MovieService from "../../services/movie.api";
 import Loading from "../../components/Loading";
 import { Link, useParams } from "react-router-dom";
 

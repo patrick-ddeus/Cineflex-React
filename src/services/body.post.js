@@ -31,7 +31,7 @@ class BodyPost {
         if (typeof name !== this.bodyPost.name.type) {
             throw new TypeError("O argumento fornecido deve ser uma String.");
         };
-        this.bodyPost.name = name;
+        this.bodyPost.name.value = name;
     };
 
     setCPF = (cpf) => {
@@ -42,7 +42,11 @@ class BodyPost {
     };
 
     getBodyPost = () => {
-        return { ...this.bodyPost };
+        const data = {}
+        for(let key in this.bodyPost){
+            data[key] = this.bodyPost[key].value
+        }
+        return data;
     };
 }
 

@@ -1,56 +1,114 @@
-import styled from "styled-components"
+import styled from "styled-components";
+import React from "react";
+import MovieService from "../../services/movie.api";
+import { useParams } from "react-router-dom";
+import BodyPost from "../../services/body.post";
 
-export default function SeatsPage() {
+import { adicionaZeroAEsquerda } from "../../utils/utils";
+
+export default function SeatsPage () {
+    const [pageConfig, setPageConfig] = React.useState({
+        seatInfo: null,
+        loading: false,
+        serverError: null
+    });
+
+    const [inputsConfig, setInputsConfigs] = React.useState({
+        name: "",
+        cpf: ""
+    });
+
+    const { sessionId } = useParams();
+
+    React.useEffect(() => {
+        const MovieAPI = new MovieService();
+        setPageConfig({ ...pageConfig, loading: true });
+
+        async function fetchSeatData () {
+            try {
+                const seatData = await MovieAPI.getSeats(sessionId);
+                setPageConfig({ ...pageConfig, loading: false, seatInfo: seatData });
+            } catch (error) {
+                setPageConfig({ ...pageConfig, loading: false, serverError: error });
+            }
+        }
+
+        fetchSeatData();
+    }, []);
+
+
+    function handleInput (event) {
+        setInputsConfigs({ ...inputsConfig, [event.currentTarget.name]: [event.currentTarget.value] });
+    }
+
+    function handleSubmit (){
+        try{
+            BodyPost.setBuyer(inputsConfig.name.join(""))
+            BodyPost.setCPF(inputsConfig.cpf.join(""))
+            console.log(BodyPost.getBodyPost())
+        }catch(error){
+            console.log(error)
+        }
+    }
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+                {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
+                    <SeatItem key={seat.id}>{adicionaZeroAEsquerda(seat.name)}</SeatItem>
+                ))}
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle color="#1AAE9E" border={"#0E7D71"} />
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle color="#C3CFD9" border={"#7B8B99"} />
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle color="#FBE192" border={"#F7C52B"} />
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
 
             <FormContainer>
                 Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                <input
+                    placeholder="Digite seu nome..."
+                    name="name"
+                    value={inputsConfig.name}
+                    onChange={handleInput}
+                />
 
                 CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                <input
+                    placeholder="Digite seu CPF..."
+                    name="cpf"
+                    value={inputsConfig.cpf}
+                    onChange={handleInput}
+                />
 
-                <button>Reservar Assento(s)</button>
+                <button onClick={handleSubmit}>Reservar Assento(s)</button>
             </FormContainer>
 
-            <FooterContainer>
-                <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                </div>
-                <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
-                </div>
-            </FooterContainer>
-
+            {pageConfig.seatInfo &&
+                <FooterContainer>
+                    <div>
+                        <img src={pageConfig.seatInfo.movie.posterURL} alt="poster" />
+                    </div>
+                    <div>
+                        <p>{pageConfig.seatInfo.movie.title}</p>
+                        <p>{`${pageConfig.seatInfo.day.weekday} - ${pageConfig.seatInfo.name}`}</p>
+                    </div>
+                </FooterContainer>
+            }
         </PageContainer>
-    )
+    );
 }
 
 const PageContainer = styled.div`
@@ -64,7 +122,7 @@ const PageContainer = styled.div`
     margin-top: 30px;
     padding-bottom: 120px;
     padding-top: 70px;
-`
+`;
 const SeatsContainer = styled.div`
     width: 330px;
     display: flex;
@@ -73,7 +131,7 @@ const SeatsContainer = styled.div`
     align-items: center;
     justify-content: center;
     margin-top: 20px;
-`
+`;
 const FormContainer = styled.div`
     width: calc(100vw - 40px); 
     display: flex;
@@ -83,21 +141,22 @@ const FormContainer = styled.div`
     font-size: 18px;
     button {
         align-self: center;
+        cursor:pointer;
     }
     input {
         width: calc(100vw - 60px);
     }
-`
+`;
 const CaptionContainer = styled.div`
     display: flex;
     flex-direction: row;
     width: 300px;
     justify-content: space-between;
     margin: 20px;
-`
+`;
 const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${({ border }) => border};         // Essa cor deve mudar
+    background-color: ${({ color }) => color};    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -105,13 +164,14 @@ const CaptionCircle = styled.div`
     align-items: center;
     justify-content: center;
     margin: 5px 3px;
-`
+`;
 const CaptionItem = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 12px;
-`
+`;
+
 const SeatItem = styled.div`
     border: 1px solid blue;         // Essa cor deve mudar
     background-color: lightblue;    // Essa cor deve mudar
@@ -124,7 +184,8 @@ const SeatItem = styled.div`
     align-items: center;
     justify-content: center;
     margin: 5px 3px;
-`
+    cursor:pointer;
+`;
 const FooterContainer = styled.div`
     width: 100%;
     height: 120px;
@@ -162,4 +223,4 @@ const FooterContainer = styled.div`
             }
         }
     }
-`
+`;

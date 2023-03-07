@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Loading from "../../components/Loading";
 import { Link } from "react-router-dom";
-import MovieService from "../../service/movie.api";
+import MovieService from "../../services/movie.api";
 
 export default function HomePage () {
     const [pageConfig, setPageConfig] = React.useState({
