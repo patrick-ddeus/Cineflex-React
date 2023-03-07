@@ -48,7 +48,11 @@ class BodyPost {
         }
         return data;
     };
-}
+
+    persistData = () => {
+        localStorage.setItem("bodyPost", JSON.stringify(this.bodyPost))
+    }
+} 
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default new BodyPost();

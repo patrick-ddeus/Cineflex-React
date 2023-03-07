@@ -1,6 +1,16 @@
-import styled from "styled-components"
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+import Order from "../../services/order";
+import React from "react";
 
-export default function SuccessPage() {
+import { adicionaZeroAEsquerda } from "../../utils/utils";
+
+export default function SuccessPage () {
+    const orderInfo = JSON.parse(localStorage.getItem("order")) || Order.getOrder()
+    
+    function cleanOrder(){
+        localStorage.removeItem("order")
+    }
 
     return (
         <PageContainer>
@@ -8,26 +18,27 @@ export default function SuccessPage() {
 
             <TextContainer>
                 <strong><p>Filme e sessão</p></strong>
-                <p>Tudo em todo lugar ao mesmo tempo</p>
-                <p>03/03/2023 - 14:00</p>
+                <p>{orderInfo.movie.title}</p>
+                <p>{`${orderInfo.session.date} - ${orderInfo.session.showtimes.name}`}</p>
             </TextContainer>
 
             <TextContainer>
                 <strong><p>Ingressos</p></strong>
-                <p>Assento 01</p>
-                <p>Assento 02</p>
-                <p>Assento 03</p>
+                {orderInfo.seats.map(seat => (
+                    <p key={seat.id}>{`Assento ${adicionaZeroAEsquerda(seat.name)}`}</p>
+                ))}
             </TextContainer>
 
             <TextContainer>
                 <strong><p>Comprador</p></strong>
-                <p>Nome: Letícia Chijo</p>
-                <p>CPF: 123.456.789-10</p>
+                <p>Nome: {orderInfo.buyer.name}</p>
+                <p>CPF: {orderInfo.buyer.cpf}</p>
             </TextContainer>
-
-            <button>Voltar para Home</button>
+            <Link to={"/"} onClick={cleanOrder}>
+                <button>Voltar para Home</button>
+            </Link>
         </PageContainer>
-    )
+    );
 }
 
 const PageContainer = styled.div`
@@ -45,6 +56,7 @@ const PageContainer = styled.div`
     }
     button {
         margin-top: 50px;
+        cursor:pointer;
     }
     h1 {
         font-family: 'Roboto';
@@ -57,7 +69,7 @@ const PageContainer = styled.div`
         text-align: center;
         color: #247A6B;
     }
-`
+`;
 const TextContainer = styled.div`
     width: 100%;
     display: flex;
@@ -68,4 +80,4 @@ const TextContainer = styled.div`
         font-weight: bold;
         margin-bottom: 10px;
     }
-`
+`;

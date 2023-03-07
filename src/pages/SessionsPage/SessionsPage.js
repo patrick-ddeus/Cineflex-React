@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import React from "react";
 import MovieService from "../../services/movie.api";
+import Order from "../../services/order";
 import Loading from "../../components/Loading";
 import { Link, useParams } from "react-router-dom";
 
@@ -16,12 +17,10 @@ export default function SessionsPage () {
     React.useEffect(() => {
         const MovieAPI = new MovieService();
         setPageConfig({ ...pageConfig, loading: true });
-
         async function fetchSessionData () {
             try {
                 const sessionData = await MovieAPI.getSessionByMovieId(id);
                 setPageConfig({ ...pageConfig, sessionInfo: sessionData, loading: false });
-
             } catch (error) {
                 setPageConfig({ ...pageConfig, loading: false, serverError: error });
             }
@@ -29,6 +28,12 @@ export default function SessionsPage () {
 
         fetchSessionData();
     }, []);
+
+    function handleOrderCreate(sessionInfo, showtime){
+        Order.setSessionData({...sessionInfo, showtimes: showtime})
+        Order.setMovieData(pageConfig.sessionInfo)
+        Order.saveOrder()
+    }
 
     return (
         <>
@@ -43,8 +48,8 @@ export default function SessionsPage () {
                             {`${session.weekday} - ${session.date}`}
                             <ButtonsContainer>
                                 {session.showtimes.map(showtime => (
-                                    <Link to={`/assentos/${showtime.id}`}>
-                                        <button key={showtime.id}>{showtime.name}</button>
+                                    <Link to={`/assentos/${showtime.id}`} key={showtime.id} onClick={() => handleOrderCreate(session, showtime)}>
+                                        <button>{showtime.name}</button>
                                     </Link>
                                 ))}
                             </ButtonsContainer>

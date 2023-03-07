@@ -2,6 +2,7 @@ import styled from "styled-components";
 import React from "react";
 import MovieService from "../../services/movie.api";
 import BodyPost from "../../services/body.post";
+import Order from "../../services/order";
 import { useParams, Link } from "react-router-dom";
 
 import Loading from "../../components/Loading";
@@ -52,6 +53,8 @@ export default function SeatsPage () {
             BodyPost.setCPF(inputsConfig.cpf.join(""));
             BodyPost.setIds([...seats]);
             MovieApi.postSeat(BodyPost.getBodyPost());
+            Order.setBuyerData(BodyPost.getBodyPost());
+            Order.saveOrder();
         } catch (error) {
             setPageConfig({ ...pageConfig, serverError: error });
         }
@@ -61,6 +64,10 @@ export default function SeatsPage () {
         const existingSeat = seats.find(idStored => idStored === seat.id);
         if (!existingSeat && seat.isAvailable) {
             setSeats([...seats, seat.id]);
+            Order.setSeatsData(seat);
+        } else {
+            const transformedSeats = seats.filter(idStored => idStored !== seat.id);
+            setSeats(transformedSeats);
         }
     }
 
