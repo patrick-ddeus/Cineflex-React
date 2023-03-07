@@ -1,43 +1,57 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import Loading from "../../components/Loading";
 import Order from "../../services/order";
 import React from "react";
 
 import { adicionaZeroAEsquerda } from "../../utils/utils";
 
 export default function SuccessPage () {
-    const orderInfo = JSON.parse(localStorage.getItem("order")) || Order.getOrder()
-    
-    function cleanOrder(){
-        localStorage.removeItem("order")
+    const orderInfo = JSON.parse(localStorage.getItem("order")) || Order.getOrder();
+    const [loading, setLoading] = React.useState(false);
+
+    React.useEffect(() => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1400);
+    }, []);
+
+    function cleanOrder () {
+        localStorage.removeItem("order");
     }
 
     return (
-        <PageContainer>
-            <h1>Pedido feito <br /> com sucesso!</h1>
+        <>
+            {loading ? <Loading /> :
+                <PageContainer>
+                    <h1>Pedido feito <br /> com sucesso!</h1>
 
-            <TextContainer>
-                <strong><p>Filme e sessão</p></strong>
-                <p>{orderInfo.movie.title}</p>
-                <p>{`${orderInfo.session.date} - ${orderInfo.session.showtimes.name}`}</p>
-            </TextContainer>
+                    <TextContainer>
+                        <strong><p>Filme e sessão</p></strong>
+                        <p>{orderInfo.movie.title}</p>
+                        <p>{`${orderInfo.session.date} - ${orderInfo.session.showtimes.name}`}</p>
+                    </TextContainer>
 
-            <TextContainer>
-                <strong><p>Ingressos</p></strong>
-                {orderInfo.seats.map(seat => (
-                    <p key={seat.id}>{`Assento ${adicionaZeroAEsquerda(seat.name)}`}</p>
-                ))}
-            </TextContainer>
+                    <TextContainer>
+                        <strong><p>Ingressos</p></strong>
+                        {orderInfo.seats.map(seat => (
+                            <p key={seat.id}>{`Assento ${adicionaZeroAEsquerda(seat.name)}`}</p>
+                        ))}
+                    </TextContainer>
 
-            <TextContainer>
-                <strong><p>Comprador</p></strong>
-                <p>Nome: {orderInfo.buyer.name}</p>
-                <p>CPF: {orderInfo.buyer.cpf}</p>
-            </TextContainer>
-            <Link to={"/"} onClick={cleanOrder}>
-                <button>Voltar para Home</button>
-            </Link>
-        </PageContainer>
+                    <TextContainer>
+                        <strong><p>Comprador</p></strong>
+                        <p>Nome: {orderInfo.buyer.name}</p>
+                        <p>CPF: {orderInfo.buyer.cpf}</p>
+                    </TextContainer>
+                    <Link to={"/"} onClick={cleanOrder}>
+                        <button>Voltar para Home</button>
+                    </Link>
+                </PageContainer>
+            }
+
+        </>
     );
 }
 
