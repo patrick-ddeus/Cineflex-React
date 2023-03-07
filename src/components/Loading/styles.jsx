@@ -5,4 +5,8 @@ export const Container = styled.div`
     display:flex;
     justify-content: center;
     align-items: center;
+    flex-direction:column;
+    font-family:"Roboto";
+    font-size:30px;
+    color:#E8833A;
 `;

@@ -28,13 +28,12 @@ export default function HomePage () {
 
     return (
         <>
-            {pageConfig.serverError &&
+            {pageConfig.loading && <Loading />}
+
+            {!pageConfig.loading && pageConfig.serverError ?
                 <PageContainer>
                     <h2>{pageConfig.serverError}</h2>
-                </PageContainer>}
-
-            {pageConfig.loading  ?
-                <Loading />
+                </PageContainer>
                 :
                 < PageContainer >
                     Selecione o filme
