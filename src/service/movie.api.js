@@ -2,18 +2,13 @@ import axios from "axios";
 
 class MovieApi {
     constructor() {
-        Object.defineProperty(this, "baseurl", {
-            writable:false,
-            configurable:false,
-            get(endpoint = "/"){
-                return `https://mock-api.driven.com.br/api/v8${endpoint}`
-            }
-        })
+        this.baseurl = (endpoint = "") => `https://mock-api.driven.com.br/api/v8${endpoint}`
     }
 
     getMovies = async (path) => {
         try {
-            const data = await axios.get(this.baseurl(`/cineflex/${path}`));
+            const response = await axios.get(this.baseurl(`/cineflex${path}`));
+            const data = response.data
             return data;
         } catch (e) {
             throw new Error(`Erro ao obter as informações dos filmes, ${e}`);
@@ -22,7 +17,8 @@ class MovieApi {
 
     getMovieById = async (id) => {
         try {
-            const data = await axios.get(this.baseurl(`/cineflex/movies/${id}/showtimes`));
+            const response = await axios.get(this.baseurl(`/cineflex/movies/${id}/showtimes`));
+            const data = response.data
             return data;
         } catch (e) {
             throw new Error('Erro ao obter horários de exibição. Por favor, tente novamente mais tarde.', e);
@@ -31,7 +27,8 @@ class MovieApi {
 
     getSeats = async (sessionId) => {
         try {
-            const data = await axios.get(this.baseurl(`/cineflex/showtimes/${sessionId}/seats`));
+            const response = await axios.get(this.baseurl(`/cineflex/showtimes/${sessionId}/seats`));
+            const data = response.data
             return data;
         } catch (e) {
             throw new Error(`Erro ao obter informações de assentos. Por favor, tente novamente mais tarde, ${e}`);
@@ -40,7 +37,8 @@ class MovieApi {
 
     postSeat = async (body) => {
         try {
-            const data = await axios.post(this.baseurl(`/cineflex/seats/book-many`), body);
+            const response = await axios.post(this.baseurl(`/cineflex/seats/book-many`), body);
+            const data = response.data
             return data;
         } catch (e) {
             throw new Error(`Erro ao reservar um assento. Por favor, tente novamente mais tarde, ${e}`);

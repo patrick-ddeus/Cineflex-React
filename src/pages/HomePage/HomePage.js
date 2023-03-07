@@ -4,13 +4,27 @@ import { Link } from "react-router-dom";
 import MovieApi from "../../service/movie.api";
 
 export default function HomePage () {
-    const [movieList, setMovieList] = React.useState(localStorage.getItem("movies") || []);
-    const [loading, setLoading] = React.useState(false);
+    const [pageConfig, setPageConfig] = React.useState({
+        movieList: localStorage.getItem("movies") || [],
+        loading: false,
+        serverError: null
+    });
 
     React.useEffect(() => {
-        function fetchData () {
+        const MovieAPI = new MovieApi();
+        setPageConfig({ ...pageConfig, loading: true });
 
+        async function fetchMovieList () {
+            try {
+                const asyncMovieList = await MovieAPI.getMovies("/movies");
+
+                setPageConfig({ ...pageConfig, movieList: asyncMovieList, loading: false });
+            } catch (error) {
+                setPageConfig({ ...pageConfig, serverError: error, loading: false });
+            }
         }
+
+        fetchMovieList();
     }, []);
 
     return (
@@ -18,29 +32,14 @@ export default function HomePage () {
             Selecione o filme
 
             <ListContainer>
-                <MovieContainer>
-                    <Link to={"/sessoes"}>
-                        <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                    </Link>
-                </MovieContainer>
+                {pageConfig.movieList.map(movie => (
+                    <MovieContainer key={movie.id}>
+                        <Link to={`/sessoes/${movie.id}`}>
+                        <img src={movie.posterURL} alt="poster" />
+                        </Link>
+                    </MovieContainer>
 
-                <MovieContainer>
-                    <Link to={"/sessoes"}>
-                        <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                    </Link>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <Link to={"/sessoes"}>
-                        <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                    </Link>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <Link to={"/sessoes"}>
-                        <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                    </Link>
-                </MovieContainer >
+                ))}
             </ListContainer >
 
         </PageContainer >

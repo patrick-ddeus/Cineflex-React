@@ -1,7 +1,6 @@
 import styled from "styled-components"
 
 export default function SessionsPage() {
-
     return (
         <PageContainer>
             Selecione o horário
