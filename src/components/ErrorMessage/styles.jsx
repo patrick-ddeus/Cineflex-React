@@ -4,5 +4,8 @@ export const Container = styled.div`
   font-size:14px;
   color:red;
   background-color:pink;
-  width:100vw;
+  padding:4px;
+  display:flex;
+  align-items: center;
+  justify-content: center;
 `;

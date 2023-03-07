@@ -24,7 +24,7 @@ export default function HomePage () {
                 setPageConfig({ ...pageConfig, serverError: error, loading: false });
             }
         }
-        localStorage.removeItem("order")
+        localStorage.setItem("order", {})
         fetchMovieList();
     }, []);
 

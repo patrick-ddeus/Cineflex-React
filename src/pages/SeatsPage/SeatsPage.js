@@ -47,12 +47,14 @@ export default function SeatsPage () {
     }
 
     function handleSubmit () {
+        pageConfig.serverError = null;
         const MovieApi = new MovieService();
         try {
             BodyPost.setBuyer(inputsConfig.name.join(""));
             BodyPost.setCPF(inputsConfig.cpf.join(""));
             BodyPost.setIds([...seats]);
             MovieApi.postSeat(BodyPost.getBodyPost());
+
             Order.setBuyerData(BodyPost.getBodyPost());
             Order.saveOrder();
         } catch (error) {
@@ -74,68 +76,65 @@ export default function SeatsPage () {
     return (
         <>
             {pageConfig.loading && <Loading />}
-            {!pageConfig.loading && pageConfig.serverError ?
-                <ErrorMessage message={"Theres a error in fetching data..."} />
-                :
-                <PageContainer>
-                    Selecione o(s) assento(s)
 
-                    <SeatsContainer>
-                        {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
-                            <SeatItem selected={seats.includes(seat.id)} available={seat.isAvailable} onClick={() => handleSeats(seat)} key={seat.id}>{adicionaZeroAEsquerda(seat.name)}</SeatItem>
-                        ))}
-                    </SeatsContainer>
+            <PageContainer>
+                Selecione o(s) assento(s)
 
-                    <CaptionContainer>
-                        <CaptionItem>
-                            <CaptionCircle color="#1AAE9E" border={"#0E7D71"} />
-                            Selecionado
-                        </CaptionItem>
-                        <CaptionItem>
-                            <CaptionCircle color="#C3CFD9" border={"#7B8B99"} />
-                            Disponível
-                        </CaptionItem>
-                        <CaptionItem>
-                            <CaptionCircle color="#FBE192" border={"#F7C52B"} />
-                            Indisponível
-                        </CaptionItem>
-                    </CaptionContainer>
+                <SeatsContainer>
+                    {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
+                        <SeatItem selected={seats.includes(seat.id)} available={seat.isAvailable} onClick={() => handleSeats(seat)} key={seat.id}>{adicionaZeroAEsquerda(seat.name)}</SeatItem>
+                    ))}
+                </SeatsContainer>
 
-                    <FormContainer>
-                        Nome do Comprador:
-                        <input
-                            placeholder="Digite seu nome..."
-                            name="name"
-                            value={inputsConfig.name}
-                            onChange={handleInput}
-                        />
+                <CaptionContainer>
+                    <CaptionItem>
+                        <CaptionCircle color="#1AAE9E" border={"#0E7D71"} />
+                        Selecionado
+                    </CaptionItem>
+                    <CaptionItem>
+                        <CaptionCircle color="#C3CFD9" border={"#7B8B99"} />
+                        Disponível
+                    </CaptionItem>
+                    <CaptionItem>
+                        <CaptionCircle color="#FBE192" border={"#F7C52B"} />
+                        Indisponível
+                    </CaptionItem>
+                </CaptionContainer>
 
-                        CPF do Comprador:
-                        <input
-                            placeholder="Digite seu CPF..."
-                            name="cpf"
-                            value={inputsConfig.cpf}
-                            onChange={handleInput}
-                        />
-                        <Link to={"/sucesso"}>
-                            <button onClick={handleSubmit}>Reservar Assento(s)</button>
-                        </Link>
-                    </FormContainer>
+                <FormContainer>
+                    {pageConfig.serverError && <ErrorMessage message={pageConfig.serverError.message} />}
+                    Nome do Comprador:
+                    <input
+                        placeholder="Digite seu nome..."
+                        name="name"
+                        value={inputsConfig.name}
+                        onChange={handleInput}
+                    />
 
-                    {pageConfig.seatInfo &&
-                        <FooterContainer>
-                            <div>
-                                <img src={pageConfig.seatInfo.movie.posterURL} alt="poster" />
-                            </div>
-                            <div>
-                                <p>{pageConfig.seatInfo.movie.title}</p>
-                                <p>{`${pageConfig.seatInfo.day.weekday} - ${pageConfig.seatInfo.name}`}</p>
-                            </div>
-                        </FooterContainer>
-                    }
-                </PageContainer>
-            }
+                    CPF do Comprador:
+                    <input
+                        placeholder="Digite seu CPF..."
+                        name="cpf"
+                        value={inputsConfig.cpf}
+                        onChange={handleInput}
+                    />
+                    <Link to={"/sucesso"}>
+                        <button onClick={handleSubmit}>Reservar Assento(s)</button>
+                    </Link>
+                </FormContainer>
 
+                {pageConfig.seatInfo &&
+                    <FooterContainer>
+                        <div>
+                            <img src={pageConfig.seatInfo.movie.posterURL} alt="poster" />
+                        </div>
+                        <div>
+                            <p>{pageConfig.seatInfo.movie.title}</p>
+                            <p>{`${pageConfig.seatInfo.day.weekday} - ${pageConfig.seatInfo.name}`}</p>
+                        </div>
+                    </FooterContainer>
+                }
+            </PageContainer>
         </>
     );
 }

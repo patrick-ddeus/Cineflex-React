@@ -18,6 +18,7 @@ export default function SuccessPage () {
     }, []);
 
     function cleanOrder () {
+        Order.order.seats = []
         localStorage.removeItem("order");
     }
 

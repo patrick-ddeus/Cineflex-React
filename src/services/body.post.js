@@ -28,15 +28,15 @@ class BodyPost {
     };
 
     setBuyer = (name) => {
-        if (typeof name !== this.bodyPost.name.type) {
-            throw new TypeError("O argumento fornecido deve ser uma String.");
+        if (typeof name !== this.bodyPost.name.type || name === "") {
+            throw new TypeError("O Nome é obrigatório e o tipo precisa ser String");
         };
         this.bodyPost.name.value = name;
     };
 
     setCPF = (cpf) => {
-        if (typeof cpf !== this.bodyPost.cpf.type) {
-            throw new TypeError("O argumento fornecido deve ser uma String.");
+        if (typeof cpf !== this.bodyPost.cpf.type || cpf === "") {
+            throw new TypeError("O CPF é obrigatório e o tipo precisa ser número");
         };
         this.bodyPost.cpf.value = cpf;
     };
