@@ -44,7 +44,9 @@ export default function SessionsPage () {
                             {`${session.weekday} - ${session.date}`}
                             <ButtonsContainer>
                                 {session.showtimes.map(showtime => (
-                                    <button key={showtime.id}>{showtime.name}</button>
+                                    <Link to={`/assentos/${showtime.id}`}>
+                                        <button key={showtime.id}>{showtime.name}</button>
+                                    </Link>
                                 ))}
                             </ButtonsContainer>
                         </SessionContainer>
