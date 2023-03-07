@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import React from "react";
 import MovieService from "../../services/movie.api";
-import { useParams } from "react-router-dom";
 import BodyPost from "../../services/body.post";
+import { useParams, Link } from "react-router-dom";
 
+import Loading from "../../components/Loading";
+import ErrorMessage from "../../components/ErrorMessage";
 import { adicionaZeroAEsquerda } from "../../utils/utils";
 
 export default function SeatsPage () {
@@ -17,6 +19,8 @@ export default function SeatsPage () {
         name: "",
         cpf: ""
     });
+
+    const [seats, setSeats] = React.useState([]);
 
     const { sessionId } = useParams();
 
@@ -41,73 +45,91 @@ export default function SeatsPage () {
         setInputsConfigs({ ...inputsConfig, [event.currentTarget.name]: [event.currentTarget.value] });
     }
 
-    function handleSubmit (){
-        try{
-            BodyPost.setBuyer(inputsConfig.name.join(""))
-            BodyPost.setCPF(inputsConfig.cpf.join(""))
-            console.log(BodyPost.getBodyPost())
-        }catch(error){
-            console.log(error)
+    function handleSubmit () {
+        const MovieApi = new MovieService();
+        try {
+            BodyPost.setBuyer(inputsConfig.name.join(""));
+            BodyPost.setCPF(inputsConfig.cpf.join(""));
+            BodyPost.setIds([...seats]);
+            MovieApi.postSeat(BodyPost.getBodyPost());
+        } catch (error) {
+            setPageConfig({ ...pageConfig, serverError: error });
+        }
+    }
+
+    function handleSeats (seat) {
+        const existingSeat = seats.find(idStored => idStored === seat.id);
+        if (!existingSeat && seat.isAvailable) {
+            setSeats([...seats, seat.id]);
         }
     }
 
     return (
-        <PageContainer>
-            Selecione o(s) assento(s)
+        <>
+            {pageConfig.loading && <Loading />}
+            {!pageConfig.loading && pageConfig.serverError ?
+                <ErrorMessage message={"Theres a error in fetching data..."} />
+                :
+                <PageContainer>
+                    Selecione o(s) assento(s)
 
-            <SeatsContainer>
-                {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
-                    <SeatItem key={seat.id}>{adicionaZeroAEsquerda(seat.name)}</SeatItem>
-                ))}
-            </SeatsContainer>
+                    <SeatsContainer>
+                        {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
+                            <SeatItem selected={seats.includes(seat.id)} available={seat.isAvailable} onClick={() => handleSeats(seat)} key={seat.id}>{adicionaZeroAEsquerda(seat.name)}</SeatItem>
+                        ))}
+                    </SeatsContainer>
 
-            <CaptionContainer>
-                <CaptionItem>
-                    <CaptionCircle color="#1AAE9E" border={"#0E7D71"} />
-                    Selecionado
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle color="#C3CFD9" border={"#7B8B99"} />
-                    Disponível
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle color="#FBE192" border={"#F7C52B"} />
-                    Indisponível
-                </CaptionItem>
-            </CaptionContainer>
+                    <CaptionContainer>
+                        <CaptionItem>
+                            <CaptionCircle color="#1AAE9E" border={"#0E7D71"} />
+                            Selecionado
+                        </CaptionItem>
+                        <CaptionItem>
+                            <CaptionCircle color="#C3CFD9" border={"#7B8B99"} />
+                            Disponível
+                        </CaptionItem>
+                        <CaptionItem>
+                            <CaptionCircle color="#FBE192" border={"#F7C52B"} />
+                            Indisponível
+                        </CaptionItem>
+                    </CaptionContainer>
 
-            <FormContainer>
-                Nome do Comprador:
-                <input
-                    placeholder="Digite seu nome..."
-                    name="name"
-                    value={inputsConfig.name}
-                    onChange={handleInput}
-                />
+                    <FormContainer>
+                        Nome do Comprador:
+                        <input
+                            placeholder="Digite seu nome..."
+                            name="name"
+                            value={inputsConfig.name}
+                            onChange={handleInput}
+                        />
 
-                CPF do Comprador:
-                <input
-                    placeholder="Digite seu CPF..."
-                    name="cpf"
-                    value={inputsConfig.cpf}
-                    onChange={handleInput}
-                />
+                        CPF do Comprador:
+                        <input
+                            placeholder="Digite seu CPF..."
+                            name="cpf"
+                            value={inputsConfig.cpf}
+                            onChange={handleInput}
+                        />
+                        <Link to={"/sucesso"}>
+                            <button onClick={handleSubmit}>Reservar Assento(s)</button>
+                        </Link>
+                    </FormContainer>
 
-                <button onClick={handleSubmit}>Reservar Assento(s)</button>
-            </FormContainer>
-
-            {pageConfig.seatInfo &&
-                <FooterContainer>
-                    <div>
-                        <img src={pageConfig.seatInfo.movie.posterURL} alt="poster" />
-                    </div>
-                    <div>
-                        <p>{pageConfig.seatInfo.movie.title}</p>
-                        <p>{`${pageConfig.seatInfo.day.weekday} - ${pageConfig.seatInfo.name}`}</p>
-                    </div>
-                </FooterContainer>
+                    {pageConfig.seatInfo &&
+                        <FooterContainer>
+                            <div>
+                                <img src={pageConfig.seatInfo.movie.posterURL} alt="poster" />
+                            </div>
+                            <div>
+                                <p>{pageConfig.seatInfo.movie.title}</p>
+                                <p>{`${pageConfig.seatInfo.day.weekday} - ${pageConfig.seatInfo.name}`}</p>
+                            </div>
+                        </FooterContainer>
+                    }
+                </PageContainer>
             }
-        </PageContainer>
+
+        </>
     );
 }
 
@@ -173,8 +195,16 @@ const CaptionItem = styled.div`
 `;
 
 const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    ${({ available, selected }) => selected ? `
+        border: 1px solid #0E7D71;
+        background-color: #1AAE9E;
+    ` : available ? `
+        border: 1px solid #7B8B99;
+        background-color: #C3CFD9;
+    ` : `
+        border: 1px solid #F7C52B;
+        background-color: #FBE192;
+    `}
     height: 25px;
     width: 25px;
     border-radius: 25px;

@@ -4,6 +4,7 @@ import MovieService from "../../services/movie.api";
 import Loading from "../../components/Loading";
 import { Link, useParams } from "react-router-dom";
 
+import ErrorMessage from "../../components/ErrorMessage";
 export default function SessionsPage () {
     const [pageConfig, setPageConfig] = React.useState({
         sessionInfo: null,
@@ -33,9 +34,7 @@ export default function SessionsPage () {
         <>
             {pageConfig.loading && <Loading />}
             {!pageConfig.loading && pageConfig.serverError ?
-                <PageContainer>
-                    <h2>{pageConfig.serverError}</h2>
-                </PageContainer>
+                <ErrorMessage message={"Error in fetching data..."}/>
                 :
                 <PageContainer>
                     Selecione o horário

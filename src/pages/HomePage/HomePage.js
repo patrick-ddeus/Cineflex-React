@@ -4,6 +4,7 @@ import Loading from "../../components/Loading";
 import { Link } from "react-router-dom";
 import MovieService from "../../services/movie.api";
 
+import ErrorMessage from "../../components/ErrorMessage";
 export default function HomePage () {
     const [pageConfig, setPageConfig] = React.useState({
         movieList: localStorage.getItem("movies") || [],
@@ -32,7 +33,7 @@ export default function HomePage () {
 
             {!pageConfig.loading && pageConfig.serverError ?
                 <PageContainer>
-                    <h2>{pageConfig.serverError}</h2>
+                    <ErrorMessage message={"Error in fetching data..."}/>
                 </PageContainer>
                 :
                 < PageContainer >
