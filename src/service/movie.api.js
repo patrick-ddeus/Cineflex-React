@@ -39,7 +39,12 @@ class MovieApi {
     };
 
     postSeat = async (body) => {
-
+        try {
+            const data = await axios.post(this.baseurl(`/cineflex/seats/book-many`), body);
+            return data;
+        } catch (e) {
+            throw new Error(`Erro ao reservar um assento. Por favor, tente novamente mais tarde, ${e}`);
+        }
     }
 }
 
