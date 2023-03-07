@@ -1,45 +1,82 @@
-import styled from "styled-components"
+import styled from "styled-components";
+import React from "react";
+import MovieService from "../../service/movie.api";
+import Loading from "../../components/Loading";
+import { Link, useParams } from "react-router-dom";
 
-export default function SessionsPage() {
+export default function SessionsPage () {
+    const [pageConfig, setPageConfig] = React.useState({
+        sessionInfo: null,
+        loading: false,
+        serverError: null
+    });
+    const { id } = useParams();
+
+    React.useEffect(() => {
+        const MovieAPI = new MovieService();
+        setPageConfig({ ...pageConfig, loading: true });
+
+        async function fetchSessionData () {
+            try {
+                const sessionData = await MovieAPI.getSessionByMovieId(id);
+                setPageConfig({ ...pageConfig, sessionInfo: sessionData, loading: false });
+
+            } catch (error) {
+                setPageConfig({ ...pageConfig, loading: false, serverError: error });
+            }
+        }
+
+        fetchSessionData();
+    }, []);
+
     return (
-        <PageContainer>
-            Selecione o horário
-            <div>
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
+        <>
+            {pageConfig.loading && <Loading />}
+            {!pageConfig.loading && pageConfig.serverError ?
+                <PageContainer>
+                    <h2>{pageConfig.serverError}</h2>
+                </PageContainer>
+                :
+                <PageContainer>
+                    Selecione o horário
+                    <div>
+                        <SessionContainer>
+                            Sexta - 03/03/2023
+                            <ButtonsContainer>
+                                <button>14:00</button>
+                                <button>15:00</button>
+                            </ButtonsContainer>
+                        </SessionContainer>
 
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
+                        <SessionContainer>
+                            Sexta - 03/03/2023
+                            <ButtonsContainer>
+                                <button>14:00</button>
+                                <button>15:00</button>
+                            </ButtonsContainer>
+                        </SessionContainer>
 
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
-            </div>
+                        <SessionContainer>
+                            Sexta - 03/03/2023
+                            <ButtonsContainer>
+                                <button>14:00</button>
+                                <button>15:00</button>
+                            </ButtonsContainer>
+                        </SessionContainer>
+                    </div>
 
-            <FooterContainer>
-                <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                </div>
-                <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                </div>
-            </FooterContainer>
+                    <FooterContainer>
+                        <div>
+                            <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                        </div>
+                        <div>
+                            <p>Tudo em todo lugar ao mesmo tempo</p>
+                        </div>
+                    </FooterContainer>
 
-        </PageContainer>
+                </PageContainer>
+            }
+        </>
     );
 }
 
@@ -115,3 +152,4 @@ const FooterContainer = styled.div`
         }
     }
 `;
+

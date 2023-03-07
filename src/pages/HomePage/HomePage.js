@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Loading from "../../assets/loading.gif";
+import Loading from "../../components/Loading";
 import { Link } from "react-router-dom";
 import MovieService from "../../service/movie.api";
 
@@ -23,23 +23,18 @@ export default function HomePage () {
                 setPageConfig({ ...pageConfig, serverError: error, loading: false });
             }
         }
-
         fetchMovieList();
     }, []);
 
     return (
         <>
-            {
-                pageConfig.loading && (
-                    <LoadingContainer>
-                        <img src={Loading} alt="" />
-                    </LoadingContainer>)
-            }
-
-            {!pageConfig.loading && pageConfig.serverError ?
+            {pageConfig.serverError &&
                 <PageContainer>
                     <h2>{pageConfig.serverError}</h2>
-                </PageContainer>
+                </PageContainer>}
+
+            {pageConfig.loading  ?
+                <Loading />
                 :
                 < PageContainer >
                     Selecione o filme
@@ -94,9 +89,3 @@ const MovieContainer = styled.div`
     }
 `;
 
-const LoadingContainer = styled.div`
-    height:100vh;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-`;
