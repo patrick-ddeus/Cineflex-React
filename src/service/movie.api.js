@@ -15,7 +15,7 @@ class MovieApi {
         }
     };
 
-    getMovieById = async (id) => {
+    getSessionByMovieId = async (id) => {
         try {
             const response = await axios.get(this.baseurl(`/cineflex/movies/${id}/showtimes`));
             const data = response.data

@@ -40,7 +40,7 @@ export default function SessionsPage() {
             </FooterContainer>
 
         </PageContainer>
-    )
+    );
 }
 
 const PageContainer = styled.div`
@@ -56,7 +56,7 @@ const PageContainer = styled.div`
     div {
         margin-top: 20px;
     }
-`
+`;
 const SessionContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -65,7 +65,7 @@ const SessionContainer = styled.div`
     font-size: 20px;
     color: #293845;
     padding: 0 20px;
-`
+`;
 const ButtonsContainer = styled.div`
     display: flex;
     flex-direction: row;
@@ -76,7 +76,7 @@ const ButtonsContainer = styled.div`
     a {
         text-decoration: none;
     }
-`
+`;
 const FooterContainer = styled.div`
     width: 100%;
     height: 120px;
@@ -114,4 +114,4 @@ const FooterContainer = styled.div`
             }
         }
     }
-`
+`;

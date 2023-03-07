@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components";
+import Loading from "../../assets/loading.gif";
 import { Link } from "react-router-dom";
-import MovieApi from "../../service/movie.api";
+import MovieService from "../../service/movie.api";
 
 export default function HomePage () {
     const [pageConfig, setPageConfig] = React.useState({
@@ -11,13 +12,12 @@ export default function HomePage () {
     });
 
     React.useEffect(() => {
-        const MovieAPI = new MovieApi();
+        const MovieAPI = new MovieService();
         setPageConfig({ ...pageConfig, loading: true });
 
         async function fetchMovieList () {
             try {
                 const asyncMovieList = await MovieAPI.getMovies("/movies");
-
                 setPageConfig({ ...pageConfig, movieList: asyncMovieList, loading: false });
             } catch (error) {
                 setPageConfig({ ...pageConfig, serverError: error, loading: false });
@@ -28,22 +28,37 @@ export default function HomePage () {
     }, []);
 
     return (
-        <PageContainer>
-            Selecione o filme
+        <>
+            {
+                pageConfig.loading && (
+                    <LoadingContainer>
+                        <img src={Loading} alt="" />
+                    </LoadingContainer>)
+            }
 
-            <ListContainer>
-                {pageConfig.movieList.map(movie => (
-                    <MovieContainer key={movie.id}>
-                        <Link to={`/sessoes/${movie.id}`}>
-                        <img src={movie.posterURL} alt="poster" />
-                        </Link>
-                    </MovieContainer>
+            {!pageConfig.loading && pageConfig.serverError ?
+                <PageContainer>
+                    <h2>{pageConfig.serverError}</h2>
+                </PageContainer>
+                :
+                < PageContainer >
+                    Selecione o filme
+                    < ListContainer >
+                        {
+                            pageConfig.movieList.map(movie => (
+                                <MovieContainer key={movie.id}>
+                                    <Link to={`/sessoes/${movie.id}`}>
+                                        <img src={movie.posterURL} alt="poster" />
+                                    </Link>
+                                </MovieContainer>
 
-                ))}
-            </ListContainer >
+                            ))
+                        }
+                    </ListContainer >
 
-        </PageContainer >
-    );
+                </PageContainer >
+            }
+        </>);
 }
 
 const PageContainer = styled.div`
@@ -77,4 +92,11 @@ const MovieContainer = styled.div`
         width: 130px;
         height: 190px;
     }
+`;
+
+const LoadingContainer = styled.div`
+    height:100vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
 `;
