@@ -56,7 +56,6 @@ export default function SeatsPage () {
             newInputs[index][name] = value;
         }
         setInputsConfigs(newInputs);
-        console.log(newInputs);
     }
 
     function handleFormSubmit (event) {
@@ -90,11 +89,8 @@ export default function SeatsPage () {
         if (!existingSeat && seat.isAvailable) {
             setSeats([...seats, seat.name]);
         } else if (existingSeat && seat.isAvailable) {
-            const confirmDelete = confirm("Tem certeza que deseja desmarcar o assento?");
-            if (confirmDelete) {
-                const transformedSeats = seats.filter(seatNameStored => seatNameStored !== seat.name);
-                setSeats(transformedSeats);
-            }
+            const transformedSeats = seats.filter(seatNameStored => seatNameStored !== seat.name);
+            setSeats(transformedSeats);
         } else {
             alert("Esse assento não está disponível");
         }
@@ -108,7 +104,12 @@ export default function SeatsPage () {
 
                 <SeatsContainer>
                     {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
-                        <SeatItem data-test="seat" selected={seats.includes(seat.name)} available={seat.isAvailable} onClick={() => handleSeats(seat)} key={seat.id}>{adicionaZeroAEsquerda(seat.name)}</SeatItem>
+                        <SeatItem
+                            data-test="seat"
+                            selected={seats.includes(seat.name)}
+                            available={seat.isAvailable}
+                            onClick={() => handleSeats(seat)} 
+                            key={seat.id}> {adicionaZeroAEsquerda(seat.name)} </SeatItem>
                     ))}
                 </SeatsContainer>
 
