@@ -18,7 +18,7 @@ export default function SuccessPage () {
     }, []);
 
     function cleanOrder () {
-        Order.order.seats = []
+        Order.order.seats = [];
         localStorage.removeItem("order");
     }
 
@@ -42,9 +42,13 @@ export default function SuccessPage () {
                     </TextContainer>
 
                     <TextContainer>
-                        <strong><p>Comprador</p></strong>
-                        <p>Nome: {orderInfo.buyer.name}</p>
-                        <p>CPF: {orderInfo.buyer.cpf}</p>
+                        <strong><p>Comprador(es)</p></strong>
+                        {orderInfo.buyer.compradores.map(comprador => (
+                            <BuyerContainer>
+                                <p>Nome: {comprador.name}</p>
+                                <p>Cpf: {comprador.cpf}</p>
+                            </BuyerContainer>
+                        ))}
                     </TextContainer>
                     <Link to={"/"} onClick={cleanOrder}>
                         <button>Voltar para Home</button>
@@ -96,3 +100,9 @@ const TextContainer = styled.div`
         margin-bottom: 10px;
     }
 `;
+
+const BuyerContainer = styled.div`
+    p{
+        margin-top:5px;
+    }
+`

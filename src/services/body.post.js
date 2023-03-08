@@ -8,13 +8,9 @@ class BodyPost {
                     type: "object",
                     value: []
                 },
-                name: {
-                    type: "string",
-                    value: "Jane Doe"
-                },
-                cpf: {
-                    type: "string",
-                    value: "1234567891"
+                compradores: {
+                    type: "object",
+                    value: []
                 }
             }
         });
@@ -27,19 +23,25 @@ class BodyPost {
         this.bodyPost.ids.value = idArray;
     };
 
-    setBuyer = (name) => {
-        if (typeof name !== this.bodyPost.name.type || name === "") {
-            throw new TypeError("O Nome é obrigatório e o tipo precisa ser String");
+    setBuyer = (Buyers) => {
+        if (Buyers.length <= 1) {
+            throw new TypeError("Os campos precisam ser preenchidos obrigatoriamente");
         };
-        this.bodyPost.name.value = name;
+        this.bodyPost.compradores.value = Buyers
+
+        for(let id in this.bodyPost.ids.value){
+            this.bodyPost.compradores.value[id].idAssento = this.bodyPost.ids.value[id]
+        }
+
+        console.log(this.bodyPost.compradores)
     };
 
-    setCPF = (cpf) => {
-        if (typeof cpf !== this.bodyPost.cpf.type || cpf === "") {
-            throw new TypeError("O CPF é obrigatório e o tipo precisa ser número");
-        };
-        this.bodyPost.cpf.value = cpf;
-    };
+    // setCPF = (cpf) => {
+    //     if (typeof cpf !== this.bodyPost.cpf.type || cpf === "") {
+    //         throw new TypeError("O CPF é obrigatório e o tipo precisa ser número");
+    //     };
+    //     this.bodyPost.cpf.value = cpf;
+    // };
 
     getBodyPost = () => {
         const data = {}

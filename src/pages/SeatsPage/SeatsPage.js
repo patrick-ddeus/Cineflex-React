@@ -3,7 +3,7 @@ import React from "react";
 import MovieService from "../../services/movie.api";
 import BodyPost from "../../services/body.post";
 import Order from "../../services/order";
-import { useNavigate , useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -16,13 +16,8 @@ export default function SeatsPage () {
         loading: false,
         serverError: null
     });
-    
-    
-    const [inputsConfig, setInputsConfigs] = React.useState({
-        name: [],
-        cpf: []
-    });
 
+    const [inputsConfig, setInputsConfigs] = React.useState([]);
     const [seats, setSeats] = React.useState([]);
     const navigate = useNavigate();
     const { sessionId } = useParams();
@@ -44,16 +39,21 @@ export default function SeatsPage () {
     }, []);
 
 
-    function handleInput (event) {
-        setInputsConfigs({ ...inputsConfig, [event.currentTarget.name]: [event.currentTarget.value] });
+    function handleInput (event, index) {
+        const { name, value } = event.currentTarget;
+        const newInputs = [...inputsConfig];
+        if (!newInputs[index]) newInputs[index] = {};
+
+        newInputs[index][name] = value;
+        setInputsConfigs(newInputs);
     }
 
-    function handleFormSubmit(event){
-        event.preventDefault()
-        try{
-            handleSubmit()
-            navigate("/sucesso")
-        } catch(error){
+    function handleFormSubmit (event) {
+        event.preventDefault();
+        try {
+            handleSubmit();
+            navigate("/sucesso");
+        } catch (error) {
             setPageConfig({ ...pageConfig, serverError: error });
         }
     }
@@ -63,18 +63,18 @@ export default function SeatsPage () {
         const MovieApi = new MovieService();
         try {
             BodyPost.setSeats([...seats]);
-            BodyPost.setBuyer(inputsConfig.name.join(""));
-            BodyPost.setCPF(inputsConfig.cpf.join(""));
+            BodyPost.setBuyer(inputsConfig);
             MovieApi.postSeat(BodyPost.getBodyPost());
 
             Order.setBuyerData(BodyPost.getBodyPost());
             Order.saveOrder();
         } catch (error) {
-            throw new Error(error.message)
+            throw new Error(error.message);
         }
     }
 
     function handleSeats (seat) {
+        inputsConfig.splice(seat.length);
         const existingSeat = seats.find(idStored => idStored === seat.id);
         if (!existingSeat && seat.isAvailable) {
             setSeats([...seats, seat.id]);
@@ -113,25 +113,44 @@ export default function SeatsPage () {
                 </CaptionContainer>
 
                 <FormContainer onSubmit={handleFormSubmit}>
-                {pageConfig.serverError && <ErrorMessage message={pageConfig.serverError.message} />}
-                    Nome do Comprador:
-                    <input
-                        placeholder="Digite seu nome..."
-                        name="name"
-                        value={inputsConfig.name}
-                        onChange={handleInput}
-                    />
+                    {pageConfig.serverError && <ErrorMessage message={pageConfig.serverError.message} />}
+                    {seats.length > 1 ? seats.map((_, index) => (
+                        <div style={{ textAlign: "left" }} key={index}>
+                            {`Nome do Comprador ${index + 1}`}:
+                            <input
+                                placeholder="Digite seu nome..."
+                                name="name"
+                                value={inputsConfig.name}
+                                onChange={(event) => handleInput(event, index)}
+                            />
 
-                    CPF do Comprador:
-                    <input
-                        placeholder="Digite seu CPF..."
-                        name="cpf"
-                        value={inputsConfig.cpf}
-                        onChange={handleInput}
-                    />
-                    
+                            {`CPF do Comprador ${index + 1}`}:
+                            <input
+                                placeholder="Digite seu CPF..."
+                                name="cpf"
+                                value={inputsConfig.cpf}
+                                onChange={(event) => handleInput(event, index)}
+                            />
+                        </div>
+                    )) : <>
+                        Nome do Comprador:
+                        <input
+                            placeholder="Digite seu nome..."
+                            name="name"
+                            value={inputsConfig.name}
+                            onChange={(event) => handleInput(event, 0)}
+                        />
+
+                        CPF do Comprador:
+                        <input
+                            placeholder="Digite seu CPF..."
+                            name="cpf"
+                            value={inputsConfig.cpf}
+                            onChange={(event) => handleInput(event, 0)}
+                        /></>}
+
                     <button>Reservar Assento(s)</button>
-                    
+
                 </FormContainer>
 
                 {pageConfig.seatInfo &&
