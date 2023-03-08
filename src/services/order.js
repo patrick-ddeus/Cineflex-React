@@ -25,7 +25,7 @@ class Order {
     };
 
     setSeatsData = (seatsInfo) => {
-        this.order.seats.push(seatsInfo);
+        this.order.seats = seatsInfo;
     };
 
     saveOrder = () => {
