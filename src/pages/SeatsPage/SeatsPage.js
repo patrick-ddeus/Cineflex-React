@@ -233,7 +233,7 @@ const CaptionContainer = styled.div`
 `;
 const CaptionCircle = styled.div`
     border: 1px solid ${({ border }) => border};         // Essa cor deve mudar
-    background-color: ${({ color }) => color};    // Essa cor deve mudar
+    background: ${({ color }) => color};    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -251,14 +251,14 @@ const CaptionItem = styled.div`
 
 const SeatItem = styled.div`
     ${({ available, selected }) => selected ? `
+        background: #1AAE9E;
         border: 1px solid #0E7D71;
-        background-color: #1AAE9E;
     ` : available ? `
-        border: 1px solid #7B8B99;
-        background-color: #C3CFD9;
+        background: #C3CFD9;
+        border: 1px solid #808F9D;
     ` : `
+        background: #FBE192;
         border: 1px solid #F7C52B;
-        background-color: #FBE192;
     `}
     height: 25px;
     width: 25px;

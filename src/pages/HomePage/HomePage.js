@@ -16,7 +16,7 @@ export default function HomePage () {
     React.useEffect(() => {
         const MovieAPI = new MovieService();
         setPageConfig({ ...pageConfig, loading: true });
-        Order.resetOrder()
+        Order.resetOrder();
 
         async function fetchMovieList () {
             try {
@@ -26,35 +26,34 @@ export default function HomePage () {
                 setPageConfig({ ...pageConfig, serverError: error, loading: false });
             }
         }
-        localStorage.setItem("order", {})
+        localStorage.setItem("order", {});
         fetchMovieList();
     }, []);
 
     return (
         <>
-            {pageConfig.loading && <Loading />}
+            {pageConfig.loading ? <Loading /> :
+                !pageConfig.loading && pageConfig.serverError ?
+                    <PageContainer>
+                        <ErrorMessage message={"Error in fetching data..."} />
+                    </PageContainer>
+                    :
+                    < PageContainer >
+                        Selecione o filme
+                        < ListContainer >
+                            {
+                                pageConfig.movieList.map(movie => (
+                                    <MovieContainer key={movie.id} data-test="movie">
+                                        <Link to={`/sessoes/${movie.id}`}>
+                                            <img src={movie.posterURL} alt="poster" />
+                                        </Link>
+                                    </MovieContainer>
 
-            {!pageConfig.loading && pageConfig.serverError ?
-                <PageContainer>
-                    <ErrorMessage message={"Error in fetching data..."}/>
-                </PageContainer>
-                :
-                < PageContainer >
-                    Selecione o filme
-                    < ListContainer >
-                        {
-                            pageConfig.movieList.map(movie => (
-                                <MovieContainer key={movie.id} data-test="movie">
-                                    <Link to={`/sessoes/${movie.id}`}>
-                                        <img src={movie.posterURL} alt="poster" />
-                                    </Link>
-                                </MovieContainer>
+                                ))
+                            }
+                        </ListContainer >
 
-                            ))
-                        }
-                    </ListContainer >
-
-                </PageContainer >
+                    </PageContainer >
             }
         </>);
 }
