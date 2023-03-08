@@ -24,16 +24,14 @@ class BodyPost {
     };
 
     setBuyer = (Buyers) => {
-        if (Buyers.length <= 1) {
+        if (Buyers.length < 1) {
             throw new TypeError("Os campos precisam ser preenchidos obrigatoriamente");
         };
-        this.bodyPost.compradores.value = Buyers
+        this.bodyPost.compradores.value = Buyers;
 
-        for(let id in this.bodyPost.ids.value){
-            this.bodyPost.compradores.value[id].idAssento = this.bodyPost.ids.value[id]
+        for (let id in this.bodyPost.ids.value) {
+            this.bodyPost.compradores.value[id].idAssento = this.bodyPost.ids.value[id];
         }
-
-        console.log(this.bodyPost.compradores)
     };
 
     // setCPF = (cpf) => {
@@ -44,17 +42,18 @@ class BodyPost {
     // };
 
     getBodyPost = () => {
-        const data = {}
-        for(let key in this.bodyPost){
-            data[key] = this.bodyPost[key].value
+        const data = {};
+        for (let key in this.bodyPost) {
+            data[key] = this.bodyPost[key].value;
         }
         return data;
     };
 
     persistData = () => {
-        localStorage.setItem("bodyPost", JSON.stringify(this.bodyPost))
-    }
-} 
+        localStorage.setItem("bodyPost", JSON.stringify(this.bodyPost));
+    };
+
+}
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default new BodyPost();

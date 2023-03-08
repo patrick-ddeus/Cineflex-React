@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Loading from "../../components/Loading";
 import { Link } from "react-router-dom";
 import MovieService from "../../services/movie.api";
+import Order from "../../services/order";
 
 import ErrorMessage from "../../components/ErrorMessage";
 export default function HomePage () {
@@ -15,6 +16,7 @@ export default function HomePage () {
     React.useEffect(() => {
         const MovieAPI = new MovieService();
         setPageConfig({ ...pageConfig, loading: true });
+        Order.resetOrder()
 
         async function fetchMovieList () {
             try {

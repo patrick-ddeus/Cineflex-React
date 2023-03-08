@@ -32,6 +32,15 @@ class Order {
         localStorage.setItem("order", JSON.stringify(this.order));
     };
 
+    resetOrder = () => {
+        this.order = {
+            movie: {},
+            session: {},
+            buyer: {},
+            seats: []
+        };
+    };
+
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

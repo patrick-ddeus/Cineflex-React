@@ -18,7 +18,7 @@ export default function SuccessPage () {
     }, []);
 
     function cleanOrder () {
-        Order.order.seats = [];
+        Order.resetOrder()
         localStorage.removeItem("order");
     }
 
@@ -43,8 +43,8 @@ export default function SuccessPage () {
 
                     <TextContainer>
                         <strong><p>Comprador(es)</p></strong>
-                        {orderInfo.buyer.compradores.map(comprador => (
-                            <BuyerContainer>
+                        {orderInfo.buyer.compradores.map((comprador, index) => (
+                            <BuyerContainer key={index}>
                                 <p>Nome: {comprador.name}</p>
                                 <p>Cpf: {comprador.cpf}</p>
                             </BuyerContainer>

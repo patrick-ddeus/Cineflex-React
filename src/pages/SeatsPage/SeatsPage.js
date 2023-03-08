@@ -1,9 +1,10 @@
+/* eslint-disable no-restricted-globals */
 import styled from "styled-components";
 import React from "react";
 import MovieService from "../../services/movie.api";
 import BodyPost from "../../services/body.post";
 import Order from "../../services/order";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -80,8 +81,11 @@ export default function SeatsPage () {
             setSeats([...seats, seat.id]);
             Order.setSeatsData(seat);
         } else {
-            const transformedSeats = seats.filter(idStored => idStored !== seat.id);
-            setSeats(transformedSeats);
+            const confirmDelete = confirm("Tem certeza que deseja desmarcar o assento?")
+            if(confirmDelete){
+                const transformedSeats = seats.filter(idStored => idStored !== seat.id);
+                setSeats(transformedSeats);
+            }
         }
     }
 
