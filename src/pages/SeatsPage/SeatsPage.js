@@ -41,8 +41,8 @@ export default function SeatsPage () {
 
     React.useEffect(() => {
         Order.setSeatsData(seats);
-        Order.saveOrder()
-    }, [seats])
+        Order.saveOrder();
+    }, [seats]);
 
 
     function handleInput (event, index) {
@@ -50,8 +50,13 @@ export default function SeatsPage () {
         const newInputs = [...inputsConfig];
         if (!newInputs[index]) newInputs[index] = {};
 
-        newInputs[index][name] = value;
+        if (name === "cpf") {
+            newInputs[index][name] = value.replace(/\D+/gi, "");
+        } else {
+            newInputs[index][name] = value;
+        }
         setInputsConfigs(newInputs);
+        console.log(newInputs);
     }
 
     function handleFormSubmit (event) {
@@ -84,14 +89,14 @@ export default function SeatsPage () {
         const existingSeat = seats.find(seatNameStored => seatNameStored === seat.name);
         if (!existingSeat && seat.isAvailable) {
             setSeats([...seats, seat.name]);
-        } else if(existingSeat && seat.isAvailable){
-            const confirmDelete = confirm("Tem certeza que deseja desmarcar o assento?")
-            if(confirmDelete){
+        } else if (existingSeat && seat.isAvailable) {
+            const confirmDelete = confirm("Tem certeza que deseja desmarcar o assento?");
+            if (confirmDelete) {
                 const transformedSeats = seats.filter(seatNameStored => seatNameStored !== seat.name);
                 setSeats(transformedSeats);
             }
-        } else{
-            alert("Esse assento não está disponível")
+        } else {
+            alert("Esse assento não está disponível");
         }
     }
 
@@ -130,7 +135,7 @@ export default function SeatsPage () {
                             <input
                                 placeholder="Digite seu nome..."
                                 name="name"
-                                value={inputsConfig.name}
+                                value={inputsConfig[index]?.name}
                                 onChange={(event) => handleInput(event, index)}
                                 data-test="client-name"
                             />
@@ -139,7 +144,7 @@ export default function SeatsPage () {
                             <input
                                 placeholder="Digite seu CPF..."
                                 name="cpf"
-                                value={inputsConfig.cpf}
+                                value={inputsConfig[index]?.cpf}
                                 onChange={(event) => handleInput(event, index)}
                                 data-test="client-cpf"
                             />
@@ -149,7 +154,7 @@ export default function SeatsPage () {
                         <input
                             placeholder="Digite seu nome..."
                             name="name"
-                            value={inputsConfig.name}
+                            value={inputsConfig[0]?.name}
                             onChange={(event) => handleInput(event, 0)}
                             data-test="client-name"
                         />
@@ -158,7 +163,7 @@ export default function SeatsPage () {
                         <input
                             placeholder="Digite seu CPF..."
                             name="cpf"
-                            value={inputsConfig.cpf}
+                            value={inputsConfig[0]?.cpf}
                             onChange={(event) => handleInput(event, 0)}
                             data-test="client-cpf"
                         /></>}
