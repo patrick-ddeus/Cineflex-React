@@ -44,11 +44,11 @@ export default function SessionsPage () {
                 <PageContainer>
                     Selecione o horário
                     {pageConfig.sessionInfo && pageConfig.sessionInfo.days.map(session => (
-                        <SessionContainer key={session.id}>
+                        <SessionContainer key={session.id} data-test="movie-day">
                             {`${session.weekday} - ${session.date}`}
                             <ButtonsContainer>
                                 {session.showtimes.map(showtime => (
-                                    <Link to={`/assentos/${showtime.id}`} key={showtime.id} onClick={() => handleOrderCreate(session, showtime)}>
+                                    <Link to={`/assentos/${showtime.id}`} data-test="showtime" key={showtime.id} onClick={() => handleOrderCreate(session, showtime)}>
                                         <button>{showtime.name}</button>
                                     </Link>
                                 ))}
@@ -57,7 +57,7 @@ export default function SessionsPage () {
                     ))
                     }
                     {pageConfig.sessionInfo &&
-                        <FooterContainer>
+                        <FooterContainer data-test="footer">
                             <div>
                                 <img src={pageConfig.sessionInfo.posterURL} alt="poster" />
                             </div>

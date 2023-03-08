@@ -9,7 +9,7 @@ export default function Header ({ logo }) {
     return (
         <NavContainer>
             {logo}
-            {location.pathname !== "/" && <IoArrowBackOutline onClick={() => navigate(-1)} />}
+            {location.pathname !== "/" && <IoArrowBackOutline onClick={() => navigate(-1)} data-test="go-home-header-btn"/>}
         </NavContainer>
     );
 }

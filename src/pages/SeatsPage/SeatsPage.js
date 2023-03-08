@@ -97,7 +97,7 @@ export default function SeatsPage () {
 
                 <SeatsContainer>
                     {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
-                        <SeatItem selected={seats.includes(seat.id)} available={seat.isAvailable} onClick={() => handleSeats(seat)} key={seat.id}>{adicionaZeroAEsquerda(seat.name)}</SeatItem>
+                        <SeatItem data-test="seat" selected={seats.includes(seat.id)} available={seat.isAvailable} onClick={() => handleSeats(seat)} key={seat.id}>{adicionaZeroAEsquerda(seat.name)}</SeatItem>
                     ))}
                 </SeatsContainer>
 
@@ -116,7 +116,7 @@ export default function SeatsPage () {
                     </CaptionItem>
                 </CaptionContainer>
 
-                <FormContainer onSubmit={handleFormSubmit}>
+                <FormContainer>
                     {pageConfig.serverError && <ErrorMessage message={pageConfig.serverError.message} />}
                     {seats.length > 1 ? seats.map((_, index) => (
                         <div style={{ textAlign: "left" }} key={index}>
@@ -126,6 +126,7 @@ export default function SeatsPage () {
                                 name="name"
                                 value={inputsConfig.name}
                                 onChange={(event) => handleInput(event, index)}
+                                data-test="client-name"
                             />
 
                             {`CPF do Comprador ${index + 1}`}:
@@ -134,6 +135,7 @@ export default function SeatsPage () {
                                 name="cpf"
                                 value={inputsConfig.cpf}
                                 onChange={(event) => handleInput(event, index)}
+                                data-test="client-cpf"
                             />
                         </div>
                     )) : <>
@@ -143,6 +145,7 @@ export default function SeatsPage () {
                             name="name"
                             value={inputsConfig.name}
                             onChange={(event) => handleInput(event, 0)}
+                            data-test="client-name"
                         />
 
                         CPF do Comprador:
@@ -151,14 +154,15 @@ export default function SeatsPage () {
                             name="cpf"
                             value={inputsConfig.cpf}
                             onChange={(event) => handleInput(event, 0)}
+                            data-test="client-cpf"
                         /></>}
 
-                    <button>Reservar Assento(s)</button>
+                    <button type="submit" onClick={handleFormSubmit} data-test="book-seat-btn">Reservar Assento(s)</button>
 
                 </FormContainer>
 
                 {pageConfig.seatInfo &&
-                    <FooterContainer>
+                    <FooterContainer data-test="footer">
                         <div>
                             <img src={pageConfig.seatInfo.movie.posterURL} alt="poster" />
                         </div>

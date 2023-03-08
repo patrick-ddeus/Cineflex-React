@@ -28,13 +28,13 @@ export default function SuccessPage () {
                 <PageContainer>
                     <h1>Pedido feito <br /> com sucesso!</h1>
 
-                    <TextContainer>
+                    <TextContainer data-test="movie-info">
                         <strong><p>Filme e sessão</p></strong>
                         <p>{orderInfo.movie.title}</p>
                         <p>{`${orderInfo.session.date} - ${orderInfo.session.showtimes.name}`}</p>
                     </TextContainer>
 
-                    <TextContainer>
+                    <TextContainer data-test="seats-info">
                         <strong><p>Ingressos</p></strong>
                         {orderInfo.seats.map(seat => (
                             <p key={seat.id}>{`Assento ${adicionaZeroAEsquerda(seat.name)}`}</p>
@@ -44,13 +44,13 @@ export default function SuccessPage () {
                     <TextContainer>
                         <strong><p>Comprador(es)</p></strong>
                         {orderInfo.buyer.compradores.map((comprador, index) => (
-                            <BuyerContainer key={index}>
+                            <BuyerContainer key={index} data-test="client-info">
                                 <p>Nome: {comprador.name}</p>
                                 <p>Cpf: {comprador.cpf}</p>
                             </BuyerContainer>
                         ))}
                     </TextContainer>
-                    <Link to={"/"} onClick={cleanOrder}>
+                    <Link to={"/"} onClick={cleanOrder} data-test="go-home-btn">
                         <button>Voltar para Home</button>
                     </Link>
                 </PageContainer>
