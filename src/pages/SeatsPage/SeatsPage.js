@@ -3,11 +3,12 @@ import React from "react";
 import MovieService from "../../services/movie.api";
 import BodyPost from "../../services/body.post";
 import Order from "../../services/order";
-import { useParams, Link } from "react-router-dom";
+import { useNavigate , useParams, Link } from "react-router-dom";
 
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
 import { adicionaZeroAEsquerda } from "../../utils/utils";
+
 
 export default function SeatsPage () {
     const [pageConfig, setPageConfig] = React.useState({
@@ -15,14 +16,15 @@ export default function SeatsPage () {
         loading: false,
         serverError: null
     });
-
+    
+    
     const [inputsConfig, setInputsConfigs] = React.useState({
-        name: "",
-        cpf: ""
+        name: [],
+        cpf: []
     });
 
     const [seats, setSeats] = React.useState([]);
-
+    const navigate = useNavigate();
     const { sessionId } = useParams();
 
     React.useEffect(() => {
@@ -46,19 +48,29 @@ export default function SeatsPage () {
         setInputsConfigs({ ...inputsConfig, [event.currentTarget.name]: [event.currentTarget.value] });
     }
 
+    function handleFormSubmit(event){
+        event.preventDefault()
+        try{
+            handleSubmit()
+            navigate("/sucesso")
+        } catch(error){
+            setPageConfig({ ...pageConfig, serverError: error });
+        }
+    }
+
     function handleSubmit () {
         pageConfig.serverError = null;
         const MovieApi = new MovieService();
         try {
+            BodyPost.setSeats([...seats]);
             BodyPost.setBuyer(inputsConfig.name.join(""));
             BodyPost.setCPF(inputsConfig.cpf.join(""));
-            BodyPost.setIds([...seats]);
             MovieApi.postSeat(BodyPost.getBodyPost());
 
             Order.setBuyerData(BodyPost.getBodyPost());
             Order.saveOrder();
         } catch (error) {
-            setPageConfig({ ...pageConfig, serverError: error });
+            throw new Error(error.message)
         }
     }
 
@@ -76,7 +88,6 @@ export default function SeatsPage () {
     return (
         <>
             {pageConfig.loading && <Loading />}
-
             <PageContainer>
                 Selecione o(s) assento(s)
 
@@ -101,8 +112,8 @@ export default function SeatsPage () {
                     </CaptionItem>
                 </CaptionContainer>
 
-                <FormContainer>
-                    {pageConfig.serverError && <ErrorMessage message={pageConfig.serverError.message} />}
+                <FormContainer onSubmit={handleFormSubmit}>
+                {pageConfig.serverError && <ErrorMessage message={pageConfig.serverError.message} />}
                     Nome do Comprador:
                     <input
                         placeholder="Digite seu nome..."
@@ -118,9 +129,9 @@ export default function SeatsPage () {
                         value={inputsConfig.cpf}
                         onChange={handleInput}
                     />
-                    <Link to={"/sucesso"}>
-                        <button onClick={handleSubmit}>Reservar Assento(s)</button>
-                    </Link>
+                    
+                    <button>Reservar Assento(s)</button>
+                    
                 </FormContainer>
 
                 {pageConfig.seatInfo &&
@@ -160,7 +171,7 @@ const SeatsContainer = styled.div`
     justify-content: center;
     margin-top: 20px;
 `;
-const FormContainer = styled.div`
+const FormContainer = styled.form`
     width: calc(100vw - 40px); 
     display: flex;
     flex-direction: column;

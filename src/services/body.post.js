@@ -20,9 +20,9 @@ class BodyPost {
         });
     }
 
-    setIds = (idArray) => {
-        if (typeof idArray !== this.bodyPost.ids.type) {
-            throw new TypeError("O argumento fornecido deve ser um Objeto.");
+    setSeats = (idArray) => {
+        if (typeof idArray !== this.bodyPost.ids.type || idArray.length === 0) {
+            throw new TypeError("Você deve escolher ao menos 1 assento");
         };
         this.bodyPost.ids.value = idArray;
     };
