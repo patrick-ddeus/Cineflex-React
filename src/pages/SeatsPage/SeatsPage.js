@@ -19,8 +19,8 @@ export default function SeatsPage () {
 
     const [inputsConfig, setInputsConfigs] = React.useState([]);
     const [seats, setSeats] = React.useState([]);
-    const navigate = useNavigate();
     const { sessionId } = useParams();
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         const MovieAPI = new MovieService();
@@ -86,10 +86,12 @@ export default function SeatsPage () {
         if (!existingSeat && seat.isAvailable) {
             setSeats([...seats, seat.name]);
         } else if (existingSeat && seat.isAvailable) {
-            const transformedSeats = seats.filter(seatNameStored => seatNameStored !== seat.name);
-            setSeats(transformedSeats);
-            inputsConfig.splice(seats.length)
-            console.log(inputsConfig)
+            const confirmDelete = confirm("Tem certeza que deseja desmarcar o assento?");
+            if (confirmDelete) {
+                const transformedSeats = seats.filter(seatNameStored => seatNameStored !== seat.name);
+                setSeats(transformedSeats);
+                inputsConfig.splice(seats.length);
+            }
         } else {
             alert("Esse assento não está disponível");
         }
