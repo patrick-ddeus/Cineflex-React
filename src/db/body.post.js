@@ -18,19 +18,19 @@ class BodyPost {
 
     setSeats = (idArray) => {
         if (typeof idArray !== this.bodyPost.ids.type || idArray.length === 0) {
-            throw new TypeError("Você deve escolher ao menos 1 assento");
+            throw new Error("Você deve escolher ao menos 1 assento");
         };
         this.bodyPost.ids.value = idArray;
     };
 
     setBuyer = (Buyers) => {
-        if (Buyers.length < 1) {
-            throw new TypeError("Os campos precisam ser preenchidos obrigatoriamente");
+        if (Buyers.length < 1 || Buyers.includes(undefined)) {
+            throw new Error("Os campos precisam ser preenchidos obrigatoriamente");
         };
         this.bodyPost.compradores.value = Buyers;
 
-        for (let id in this.bodyPost.ids.value) {
-            this.bodyPost.compradores.value[id].idAssento = this.bodyPost.ids.value[id];
+        for (let index in this.bodyPost.ids.value) {
+            this.bodyPost.compradores.value[index].idAssento = this.bodyPost.ids.value[index];
         }
     };
 

@@ -24,8 +24,8 @@ class Order {
         this.order.buyer = buyerInfo;
     };
 
-    setSeatsData = (seatsInfo) => {
-        this.order.seats = seatsInfo;
+    setSeatsData = (seatsArray) => {
+        this.order.seats = seatsArray;
     };
 
     saveOrder = () => {

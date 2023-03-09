@@ -5,9 +5,9 @@ class MovieApi {
         this.baseurl = (endpoint = "") => `https://mock-api.driven.com.br/api/v8${endpoint}`
     }
 
-    getMovies = async (path) => {
+    getMovies = async () => {
         try {
-            const response = await axios.get(this.baseurl(`/cineflex${path}`));
+            const response = await axios.get(this.baseurl(`/cineflex/movies`));
             const data = response.data
             return data;
         } catch (e) {

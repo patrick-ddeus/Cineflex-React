@@ -1,11 +1,10 @@
-import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Loading from "../../components/Loading";
-import Order from "../../services/order";
+import Order from "../../db/order";
 import React from "react";
 
 import { adicionaZeroAEsquerda } from "../../utils/utils";
-
+import * as S from "./styles"
 export default function SuccessPage () {
     const orderInfo = JSON.parse(localStorage.getItem("order")) || Order.getOrder();
     const [loading, setLoading] = React.useState(false);
@@ -25,84 +24,38 @@ export default function SuccessPage () {
     return (
         <>
             {loading ? <Loading /> :
-                <PageContainer>
+                <S.PageContainer>
                     <h1>Pedido feito <br /> com sucesso!</h1>
 
-                    <TextContainer data-test="movie-info">
+                    <S.TextContainer data-test="movie-info">
                         <strong><p>Filme e sessão</p></strong>
                         <p>{orderInfo.movie.title}</p>
                         <p>{`${orderInfo.session.date} - ${orderInfo.session.showtimes.name}`}</p>
-                    </TextContainer>
+                    </S.TextContainer>
 
-                    <TextContainer data-test="seats-info">
+                    <S.TextContainer data-test="seats-info">
                         <strong><p>Ingressos</p></strong>
                         {orderInfo.seats.map(seat => (
                             <p key={seat}>{`Assento ${adicionaZeroAEsquerda(seat)}`}</p>
                         ))}
-                    </TextContainer>
+                    </S.TextContainer>
 
-                    <TextContainer>
+                    <S.TextContainer>
                         <strong><p>Comprador(es)</p></strong>
                         {orderInfo.buyer.compradores.map((comprador, index) => (
-                            <BuyerContainer key={index} data-test="client-info">
+                            <S.BuyerContainer key={index} data-test="client-info">
                                 <p>Nome: {comprador.name}</p>
                                 <p>Cpf: {comprador.cpf}</p>
-                            </BuyerContainer>
+                            </S.BuyerContainer>
                         ))}
-                    </TextContainer>
+                    </S.TextContainer>
                     <Link to={"/"} onClick={cleanOrder} data-test="go-home-btn">
                         <button>Voltar para Home</button>
                     </Link>
-                </PageContainer>
+                </S.PageContainer>
             }
 
         </>
     );
 }
 
-const PageContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Roboto';
-    font-size: 24px;
-    color: #293845;
-    margin: 30px 20px;
-    padding-bottom: 120px;
-    padding-top: 70px;
-    a {
-        text-decoration: none;
-    }
-    button {
-        margin-top: 50px;
-        cursor:pointer;
-    }
-    h1 {
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 700;
-        font-size: 24px;
-        line-height: 28px;
-        display: flex;
-        align-items: center;
-        text-align: center;
-        color: #247A6B;
-    }
-`;
-const TextContainer = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 30px;
-    strong {
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-`;
-
-const BuyerContainer = styled.div`
-    p{
-        margin-top:5px;
-    }
-`
