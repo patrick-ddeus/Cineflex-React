@@ -41,14 +41,13 @@ export default function SeatsPage () {
     React.useEffect(() => {
         Order.setSeatsData(seats);
         Order.saveOrder();
+        console.log(inputsConfig)
     }, [seats]);
 
 
     function handleInput (event, index) {
         const { name, value } = event.currentTarget;
         const newInputs = [...inputsConfig];
-        if (!newInputs[index]) newInputs[index] = {};
-
         if (name === "cpf") {
             newInputs[index][name] = value.replace(/\D+/gi, "");
         } else {
@@ -68,13 +67,13 @@ export default function SeatsPage () {
     }
 
     function handleSubmit () {
-        pageConfig.serverError = null;
         const MovieApi = new MovieService();
         try {
             BodyPost.setSeats([...seats]);
             BodyPost.setBuyer(inputsConfig);
             MovieApi.postSeat(BodyPost.getBodyPost());
             Order.setBuyerData(BodyPost.getBodyPost());
+
             Order.saveOrder();
         } catch (error) {
             throw new Error(error.message);
@@ -82,15 +81,17 @@ export default function SeatsPage () {
     }
 
     function handleSeats (seat) {
-        const existingSeat = seats.find(seatNameStored => seatNameStored === seat.name);
+        const existingSeat = seats.find(seatNameStored => seatNameStored === seat);
         if (!existingSeat && seat.isAvailable) {
-            setSeats([...seats, seat.name]);
+            setSeats([...seats, seat]);
+            setInputsConfigs([...inputsConfig, {idAssento: seat.id}])
         } else if (existingSeat && seat.isAvailable) {
             const confirmDelete = confirm("Tem certeza que deseja desmarcar o assento?");
             if (confirmDelete) {
-                const transformedSeats = seats.filter(seatNameStored => seatNameStored !== seat.name);
+                const transformedSeats = seats.filter(seatNameStored => seatNameStored !== seat);
+                const transformedInputs = inputsConfig.filter(input => input.idAssento !== seat.id);
                 setSeats(transformedSeats);
-                inputsConfig.splice(seats.length);
+                setInputsConfigs(transformedInputs);
             }
         } else {
             alert("Esse assento não está disponível");
@@ -99,93 +100,79 @@ export default function SeatsPage () {
 
     return (
         <>
-            {pageConfig.loading && <Loading />}
-            <S.PageContainer>
-                Selecione o(s) assento(s)
+            {pageConfig.loading ? <Loading /> :
+                <S.PageContainer>
+                    Selecione o(s) assento(s)
 
-                <S.SeatsContainer>
-                    {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
-                        <S.SeatItem
-                            data-test="seat"
-                            selected={seats.includes(seat.name)}
-                            available={seat.isAvailable}
-                            onClick={() => handleSeats(seat)}
-                            key={seat.id}> {adicionaZeroAEsquerda(seat.name)} </S.SeatItem>
-                    ))}
-                </S.SeatsContainer>
+                    <S.SeatsContainer>
+                        {pageConfig.seatInfo && pageConfig.seatInfo.seats.map(seat => (
+                            <S.SeatItem
+                                data-test="seat"
+                                selected={seats.includes(seat)}
+                                available={seat.isAvailable}
+                                onClick={() => handleSeats(seat)}
+                                key={seat.id}> {adicionaZeroAEsquerda(seat.name)} </S.SeatItem>
+                        ))}
+                    </S.SeatsContainer>
 
-                <S.CaptionContainer>
-                    <S.CaptionItem>
-                        <S.CaptionCircle color="#1AAE9E" border={"#0E7D71"} />
-                        Selecionado
-                    </S.CaptionItem>
-                    <S.CaptionItem>
-                        <S.CaptionCircle color="#C3CFD9" border={"#7B8B99"} />
-                        Disponível
-                    </S.CaptionItem>
-                    <S.CaptionItem>
-                        <S.CaptionCircle color="#FBE192" border={"#F7C52B"} />
-                        Indisponível
-                    </S.CaptionItem>
-                </S.CaptionContainer>
+                    <S.CaptionContainer>
+                        <S.CaptionItem>
+                            <S.CaptionCircle color="#1AAE9E" border={"#0E7D71"} />
+                            Selecionado
+                        </S.CaptionItem>
+                        <S.CaptionItem>
+                            <S.CaptionCircle color="#C3CFD9" border={"#7B8B99"} />
+                            Disponível
+                        </S.CaptionItem>
+                        <S.CaptionItem>
+                            <S.CaptionCircle color="#FBE192" border={"#F7C52B"} />
+                            Indisponível
+                        </S.CaptionItem>
+                    </S.CaptionContainer>
 
-                <S.FormContainer>
+                    <S.FormContainer>
 
-                    {seats.length > 1 ? seats.map((_, index) => (
-                        <div style={{ textAlign: "left" }} key={index}>
-                            {`Nome do Comprador ${index + 1}`}:
-                            <input
-                                placeholder="Digite seu nome..."
-                                name="name"
-                                value={inputsConfig[index]?.name}
-                                onChange={(event) => handleInput(event, index)}
-                                data-test="client-name"
-                            />
+                        {seats.length >= 1 ? seats.map((seat, index) => (
+                            <div style={{ textAlign: "left" }} key={index}>
+                                {`Nome do Comprador ${index + 1}`}:
+                                <input
+                                    placeholder="Digite seu nome..."
+                                    name="name"
+                                    value={inputsConfig[index]?.name || ""}
+                                    onChange={(event) => handleInput(event, index)}
+                                    required
+                                    data-test="client-name"
+                                />
 
-                            {`CPF do Comprador ${index + 1}`}:
-                            <input
-                                placeholder="Digite seu CPF..."
-                                name="cpf"
-                                value={inputsConfig[index]?.cpf}
-                                onChange={(event) => handleInput(event, index)}
-                                data-test="client-cpf"
-                            />
-                        </div>
-                    )) : <>
-                        Nome do Comprador:
-                        <input
-                            placeholder="Digite seu nome..."
-                            name="name"
-                            value={inputsConfig[0]?.name}
-                            onChange={(event) => handleInput(event, 0)}
-                            data-test="client-name"
-                        />
+                                {`CPF do Comprador ${index + 1}`}:
+                                <input
+                                    placeholder="Digite seu CPF..."
+                                    name="cpf"
+                                    value={inputsConfig[index]?.cpf || ""}
+                                    onChange={(event) => handleInput(event, index)}
+                                    required
+                                    data-test="client-cpf"
+                                />
+                            </div>
+                        )) : <S.noSeatsContainer >Selecione um assento primeiro</S.noSeatsContainer>}
+                        {pageConfig.serverError && <ErrorMessage message={pageConfig.serverError.message} />}
+                        <button type="submit" onClick={handleFormSubmit} data-test="book-seat-btn">Reservar Assento(s)</button>
 
-                        CPF do Comprador:
-                        <input
-                            placeholder="Digite seu CPF..."
-                            name="cpf"
-                            value={inputsConfig[0]?.cpf}
-                            onChange={(event) => handleInput(event, 0)}
-                            data-test="client-cpf"
-                        /></>}
-                    {pageConfig.serverError && <ErrorMessage message={pageConfig.serverError.message} />}
-                    <button type="submit" onClick={handleFormSubmit} data-test="book-seat-btn">Reservar Assento(s)</button>
+                    </S.FormContainer>
 
-                </S.FormContainer>
-
-                {pageConfig.seatInfo &&
-                    <S.FooterContainer data-test="footer">
-                        <div>
-                            <img src={pageConfig.seatInfo.movie.posterURL} alt="poster" />
-                        </div>
-                        <div>
-                            <p>{pageConfig.seatInfo.movie.title}</p>
-                            <p>{`${pageConfig.seatInfo.day.weekday} - ${pageConfig.seatInfo.name}`}</p>
-                        </div>
-                    </S.FooterContainer>
-                }
-            </S.PageContainer>
+                    {pageConfig.seatInfo &&
+                        <S.FooterContainer data-test="footer">
+                            <div>
+                                <img src={pageConfig.seatInfo.movie.posterURL} alt="poster" />
+                            </div>
+                            <div>
+                                <p>{pageConfig.seatInfo.movie.title}</p>
+                                <p>{`${pageConfig.seatInfo.day.weekday} - ${pageConfig.seatInfo.name}`}</p>
+                            </div>
+                        </S.FooterContainer>
+                    }
+                </S.PageContainer>
+            }
         </>
     );
 }

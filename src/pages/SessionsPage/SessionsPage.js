@@ -15,6 +15,7 @@ export default function SessionsPage () {
     const { id } = useParams();
 
     React.useEffect(() => {
+        Order.order.seats = []
         const MovieAPI = new MovieService();
         setPageConfig({ ...pageConfig, loading: true });
         async function fetchSessionData () {

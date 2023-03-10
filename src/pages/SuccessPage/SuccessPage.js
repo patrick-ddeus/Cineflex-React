@@ -36,7 +36,7 @@ export default function SuccessPage () {
                     <S.TextContainer data-test="seats-info">
                         <strong><p>Ingressos</p></strong>
                         {orderInfo.seats.map(seat => (
-                            <p key={seat}>{`Assento ${adicionaZeroAEsquerda(seat)}`}</p>
+                            <p key={seat.id}>{`Assento ${adicionaZeroAEsquerda(seat.name)}`}</p>
                         ))}
                     </S.TextContainer>
 

@@ -24,14 +24,19 @@ class BodyPost {
     };
 
     setBuyer = (Buyers) => {
+        console.log(Buyers)
         if (Buyers.length < 1 || Buyers.includes(undefined)) {
             throw new Error("Os campos precisam ser preenchidos obrigatoriamente");
         };
-        this.bodyPost.compradores.value = Buyers;
 
-        for (let index in this.bodyPost.ids.value) {
-            this.bodyPost.compradores.value[index].idAssento = this.bodyPost.ids.value[index];
+        for (let Buyer of Buyers) {
+            if (!Buyer.cpf || !Buyer.name) {
+                throw new Error("Campos NOME ou CPF não foram preenchidos corretamente");
+            }
         }
+
+        console.log(Buyers)
+        this.bodyPost.compradores.value = Buyers;
     };
 
     // setCPF = (cpf) => {

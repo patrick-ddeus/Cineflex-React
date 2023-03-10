@@ -121,3 +121,11 @@ export const FooterContainer = styled.div`
         }
     }
 `;
+
+export const noSeatsContainer = styled.h2`
+    text-align:center;
+    margin:40px 0;
+    font-size:26px;
+    font-weight: 600;
+    width:100%;
+`;
