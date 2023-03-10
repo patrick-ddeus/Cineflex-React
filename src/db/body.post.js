@@ -24,7 +24,6 @@ class BodyPost {
     };
 
     setBuyer = (Buyers) => {
-        console.log(Buyers)
         if (Buyers.length < 1 || Buyers.includes(undefined)) {
             throw new Error("Os campos precisam ser preenchidos obrigatoriamente");
         };
@@ -35,7 +34,6 @@ class BodyPost {
             }
         }
 
-        console.log(Buyers)
         this.bodyPost.compradores.value = Buyers;
     };
 

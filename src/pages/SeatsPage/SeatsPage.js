@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-restricted-globals */
 import React from "react";
 import MovieService from "../../services/movie.api";
@@ -41,7 +42,6 @@ export default function SeatsPage () {
     React.useEffect(() => {
         Order.setSeatsData(seats);
         Order.saveOrder();
-        console.log(inputsConfig)
     }, [seats]);
 
 
@@ -73,7 +73,6 @@ export default function SeatsPage () {
             BodyPost.setBuyer(inputsConfig);
             MovieApi.postSeat(BodyPost.getBodyPost());
             Order.setBuyerData(BodyPost.getBodyPost());
-
             Order.saveOrder();
         } catch (error) {
             throw new Error(error.message);
