@@ -29,7 +29,7 @@ class BodyPost {
         };
 
         for (let Buyer of Buyers) {
-            if (!Buyer.cpf || !Buyer.name) {
+            if (!Buyer.cpf || !Buyer.nome) {
                 throw new Error("Campos NOME ou CPF não foram preenchidos corretamente");
             }
         }

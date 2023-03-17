@@ -8,7 +8,7 @@ class ValidaCPF {
     });
   }
 
-  éSequência () {
+  ehSequencia () {
     return this.cpfLimpo.charAt(0).repeat(11) === this.cpfLimpo;
   }
 
@@ -45,7 +45,7 @@ class ValidaCPF {
       throw new Error("CPF precisa ter 11 caracteres");
     };
 
-    if (this.éSequência()) {
+    if (this.ehSequencia()) {
       throw new Error("CPF não pode ser uma sequência!");
     };
 

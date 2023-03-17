@@ -69,11 +69,12 @@ export default function SeatsPage () {
     function handleSubmit () {
         const MovieApi = new MovieService();
         try {
-            BodyPost.setSeats([...seats]);
+            BodyPost.setSeats(seats.map(seat => seat.id));
             BodyPost.setBuyer(inputsConfig);
-            MovieApi.postSeat(BodyPost.getBodyPost());
             Order.setBuyerData(BodyPost.getBodyPost());
             Order.saveOrder();
+            console.log(BodyPost.getBodyPost())
+            MovieApi.postSeat(BodyPost.getBodyPost());
         } catch (error) {
             throw new Error(error.message);
         }
@@ -136,8 +137,8 @@ export default function SeatsPage () {
                                 {`Nome do Comprador ${index + 1}`}:
                                 <input
                                     placeholder="Digite seu nome..."
-                                    name="name"
-                                    value={inputsConfig[index]?.name || ""}
+                                    name="nome"
+                                    value={inputsConfig[index]?.nome || ""}
                                     onChange={(event) => handleInput(event, index)}
                                     required
                                     data-test="client-name"
